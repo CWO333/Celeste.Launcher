@@ -329,8 +329,16 @@ namespace Celeste_Launcher_Gui.Services
                 
                 if (LegacyBootstrapper.UserConfig.LimitCPUCores)
                 {
+                    Logger.Information("Limit CPU Cores enabled.");
                     gameProcess.PriorityClass = ProcessPriorityClass.High;
-                    gameProcess.ProcessorAffinity = (IntPtr) 0xF;
+                    Logger.Information("Logical Processors Available: {@Processors}", Environment.ProcessorCount.ToString());
+                    if (Environment.ProcessorCount > 4)
+                    {
+                        gameProcess.ProcessorAffinity = (IntPtr) 0xF;
+                        Logger.Information("Processor Affinity set to: {@Affinity}", gameProcess.ProcessorAffinity);
+                    }
+                    else
+                        Logger.Information("Limit CPU Cores ignored. Not enough cores available to enable.");
                 }
             }
             catch (Exception exception)
